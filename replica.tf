@@ -187,6 +187,15 @@ resource "aws_s3_bucket_acl" "replica" {
 
   bucket = aws_s3_bucket.replica[0].id
   acl    = "private"
+  depends_on = [aws_s3_bucket_ownership_controls.replica]
+}
+
+# Resource to avoid error "AccessControlListNotSupported: The bucket does not allow ACLs"
+resource "aws_s3_bucket_ownership_controls" "replica" {
+  bucket = aws_s3_bucket.bucket-one-two.id
+  rule {
+    object_ownership = "ObjectWriter"
+  }
 }
 
 resource "aws_s3_bucket_versioning" "replica" {

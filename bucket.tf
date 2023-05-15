@@ -69,6 +69,15 @@ resource "aws_s3_bucket" "state" {
 resource "aws_s3_bucket_acl" "state" {
   bucket = aws_s3_bucket.state.id
   acl    = "private"
+  depends_on = [aws_s3_bucket_ownership_controls.state]
+}
+
+# Resource to avoid error "AccessControlListNotSupported: The bucket does not allow ACLs"
+resource "aws_s3_bucket_ownership_controls" "state" {
+  bucket = aws_s3_bucket.state.id
+  rule {
+    object_ownership = "ObjectWriter"
+  }
 }
 
 resource "aws_s3_bucket_versioning" "state" {
